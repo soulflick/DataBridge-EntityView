@@ -1,0 +1,29 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page vertically-stretched">
+    <div class="sidebar vertically-stretched" style="background:#333333">
+        <NavMenu />
+    </div>
+
+    <div class="main vertically-stretched">
+
+        <div class="top-row px-4" style="text-align:left">
+
+            <div id="BackButton" style="left:0px; width:100%; float:left"></div>
+
+            <div>
+                <nobr>
+                    @Now.DayOfWeek, @Now.ToString()
+                </nobr>
+            </div>
+        </div>
+
+        <div class="content px-4 vertically-stretched">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    private DateTime Now = DateTime.Now;
+}

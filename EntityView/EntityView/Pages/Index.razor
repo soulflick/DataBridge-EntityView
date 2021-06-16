@@ -1,0 +1,46 @@
+﻿@page "/"
+@*
+    @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+    @inject IAccessTokenProvider TokenProvide
+*@
+@*
+    if (tokenResult.TryGetToken(out var token))
+    {
+    requestMessage.Headers.Authorization =
+    new AuthenticationHeaderValue("Bearer", token.Value);
+
+    requestMessage.Content.Headers.TryAddWithoutValidation(
+    "x-custom-header", "value");
+
+    var response = await Http.SendAsync(requestMessage);
+    var responseStatusCode = response.StatusCode;
+
+    responseBody = await response.Content.ReadAsStringAsync();
+    }
+*@
+@inject IJSRuntime JS;
+@code
+{
+    private async Task SetBack()
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "BackButton", "");
+    }
+}
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        SetBack();
+    }
+}
+
+
+<h1>Welcome to EntityView v0.2</h1>
+
+    Last change 10.3.2021
+<br />
+<a href="http://soulflick.com">Visit</a>  our new website.
+<br />
+<br />
+    or mail: <a href="mailto:mail@soulflick.com">mail@soulflick.com</a>

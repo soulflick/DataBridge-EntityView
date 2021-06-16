@@ -1,0 +1,123 @@
+﻿@page "/factory/{id}"
+
+@using EntityView.Data
+@using System.Net.Http
+@using Data = EntityView.Services.DataService
+
+@inject HttpClient Http
+@inject IJSRuntime JS;
+@code
+{
+    private async Task SetBack()
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "BackButton", "<a href=\"/factories\">Back</a> / <a href=\"factory/0\">New</a>");
+    }
+
+    private async Task SetResult(string text)
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "OperationResult", text);
+    }
+}
+
+<div class="page-header">@PageTitle</div>
+<br />
+
+<p>
+    <EditForm Model="@_factory" OnValidSubmit="@SubmitMe">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="FactoryName" class="col-sm-2 control-label">Factory</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="FactoryName" @bind="@_factory.FactoryName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Company" class="col-sm-2 control-label">Company</label>
+            <div class="col-sm-10">
+                <InputSelect id="department" @bind-Value="_factory.CompanyId" style="min-width:300px; padding:5px;">
+                    @if (_companies != null)
+                    {
+                        @foreach (var company in _companies)
+                        {
+                            <option value="@company.Id">@company.CompanyName</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="FactoryName" class="col-sm-2 control-label">Location</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="Location" @bind="@_factory.Location">
+            </div>
+        </div>
+
+        <input type="submit" style="float:left; left:60px; width:80px" class="btn-default" value="Submit" />
+
+    </EditForm>
+
+</p>
+<br />
+<br />
+<div id="OperationResult" />
+
+@code {
+
+    public object _object;
+
+    private string SaveMessage { get; set; } = "";
+
+    private async void SubmitMe()
+    {
+        var newFactory = System.Text.Json.JsonSerializer.Serialize(_factory);
+        var content = new StringContent(newFactory, System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PutAsync("factory", content);
+
+
+
+        SetResult(EntityView.Classes.Utils.GetStateString(response.IsSuccessStatusCode, IsNewInstance));
+    }
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private Factory _factory { get; set; }
+    public string _factoryName;
+
+    private string PageTitle { get; set; }
+    private bool IsNewInstance { get; set; } = true;
+
+    private List<Company> _companies { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetBack();
+
+        if (string.IsNullOrEmpty(id) || id == "0")
+        {
+            IsNewInstance = true;
+            PageTitle = "New Factory";
+            _factory = new Factory();
+        }
+        else
+        {
+            IsNewInstance = false;
+            
+            _factory = Data.Get<Factory>($"factory/{id}");
+
+            if (_factory == null)
+                SetResult("Object not found");
+
+            PageTitle = "Edit " + _factory.FactoryName;
+        }
+
+        _companies = Data.GetAll<Company>("companies");
+
+    }
+}

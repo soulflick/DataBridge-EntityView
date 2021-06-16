@@ -1,0 +1,126 @@
+﻿@page "/factories"
+
+@using EntityView.Data
+@using System.Net.Http
+@using Data = EntityView.Services.DataService
+
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+
+@code
+{
+    private async Task SetBack()
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "BackButton", "<a href=\"/\">Home</a> /<a href=\"/factory/0\">New</a>");
+    }
+}
+
+
+<div class="page-header">Factories</div>
+
+@if (_factories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <form asp-page="./Index" method="get">
+        <div class="form-actions no-color" style="margin-top:10px">
+            <p>
+                Find by name:
+                <input type="text" name="SearchString" value="@Filter" />
+                <input type="submit" value="Search" class="btn-default" />
+            </p>
+        </div>
+    </form>
+
+    <table class="table">
+    </table>
+
+    <p>
+        <table class="std-table" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="sort-th" @onclick="@(() => SortTable("FactoryName"))">Factory</th>
+                    <th class="sort-th" @onclick="@(() => SortTable("CompanyName"))">Company</th>
+                    <th class="sort-th" @onclick="@(() => SortTable("Location"))">Location</th>
+                    <th width="80" />
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var factory in _factories)
+                {
+                    <tr>
+                        <td><a href="factory/@factory.Id">@factory.FactoryName</a></td>
+                        <td>@factory.CompanyName</td>
+                        <td>@factory.Location</td>
+                        <td><label class="link" @onclick="@(() => Delete(factory.Id))">Delete</label></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </p>
+
+    @code {
+
+        void SubmitMe()
+        {
+        }
+    }
+
+    @code {
+
+        [Parameter]
+        public string Filter { get; set; }
+
+        [Parameter]
+        public string OrderColumn { get; set; }
+
+        string ThisTableText { get; set; }
+
+        public RenderFragment Fragment { get; set; }
+
+
+        public List<Factory> _factories { get; set; }
+
+        private async void Delete(Guid id)
+        {
+            bool confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure  you want to delete this record?");
+            if (confirmed)
+            {
+                var response = await Http.DeleteAsync($"factory/{id}");
+            }
+
+            Refresh();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            SetBack();
+
+            Refresh();
+        }
+
+        void Refresh()
+        {
+            _factories = Data.GetAll<Factory>("factories");
+            StateHasChanged();
+
+            foreach (Factory _fct in _factories)
+            {
+                if (_fct.CompanyId != Guid.Empty)
+                    _fct.CompanyName = Data.Get<Company>($"company/{_fct.CompanyId}").CompanyName;
+            }
+        }
+
+        private void  SortTable(string propertyName)
+        {
+            EntityView.Creations.NetGrid.SortTable<Factory>(_factories, propertyName, SortState);
+        }
+
+        private EntityView.Creations.SortState SortState = new EntityView.Creations.SortState();
+
+    }
+
+}

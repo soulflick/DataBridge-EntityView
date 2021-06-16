@@ -1,0 +1,112 @@
+﻿@page "/company/{id}"
+
+@using EntityView.Data
+@using Newtonsoft.Json
+@using System.Net.Http
+@using Data = EntityView.Services.DataService
+
+@inject HttpClient Http
+@inject IJSRuntime JS;
+@code
+{
+    private async Task SetBack()
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "BackButton", "<a href=\"/companies\">Back</a> / <a href=\"company/0\">New</a>");
+    }
+
+    private async Task SetResult(string text)
+    {
+        JS.InvokeAsync<bool>("setInnnerHTML", "OperationResult", text);
+    }
+}
+
+<div class="page-header">@PageTitle</div>
+<br />
+
+<p>
+    <EditForm Model="@_company" OnValidSubmit="@SubmitMe">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="CompanyName" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="CompanyName" @bind="@_company.CompanyName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="InternalName" class="col-sm-2 control-label">Internal Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="InternalName" @bind="@_company.InternalName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Address" class="col-sm-2 control-label">Address</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="Address" @bind="@_company.Address">
+            </div>
+        </div>
+
+        <input type="submit" style="float:left; left:60px; width:80px" class="btn-default" value="Submit" />
+
+    </EditForm>
+
+</p>
+<br />
+<br />
+<div id="OperationResult" />
+
+@code {
+
+    private string SaveMessage { get; set; } = "";
+
+    private async void SubmitMe()
+    {
+        var newCompany = System.Text.Json.JsonSerializer.Serialize(_company);
+        var content = new StringContent(newCompany, System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PutAsync("company", content);
+
+        SetResult(EntityView.Classes.Utils.GetStateString(response.IsSuccessStatusCode, IsNewInstance));
+    }
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    private string companyName { get; set; }
+    private Company _company { get; set; }
+    private string PageTitle { get; set; }
+    private bool IsNewInstance { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetBack();
+
+        if (string.IsNullOrEmpty(id) || id == "0")
+        {
+            IsNewInstance = true;
+            PageTitle = "New Company";
+
+            _company = new Company();
+        }
+        else
+        {
+            IsNewInstance = false;
+
+            _company = Data.Get<Company>($"company/{id}");
+
+            if (_company == null)
+            {
+                SetResult("Object not found");
+            }
+            else
+            {
+                companyName = _company.CompanyName;
+            }
+
+            PageTitle = "Edit " + companyName;
+        }
+    }
+}

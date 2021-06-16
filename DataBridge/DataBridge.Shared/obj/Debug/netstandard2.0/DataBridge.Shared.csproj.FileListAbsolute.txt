@@ -1,0 +1,8 @@
+C:\Workspace\projects\DataBridge\DataBridge.Shared\bin\Debug\netstandard2.0\DataBridge.Shared.deps.json
+C:\Workspace\projects\DataBridge\DataBridge.Shared\bin\Debug\netstandard2.0\DataBridge.Shared.dll
+C:\Workspace\projects\DataBridge\DataBridge.Shared\bin\Debug\netstandard2.0\DataBridge.Shared.pdb
+C:\Workspace\projects\DataBridge\DataBridge.Shared\obj\Debug\netstandard2.0\DataBridge.Shared.AssemblyInfoInputs.cache
+C:\Workspace\projects\DataBridge\DataBridge.Shared\obj\Debug\netstandard2.0\DataBridge.Shared.AssemblyInfo.cs
+C:\Workspace\projects\DataBridge\DataBridge.Shared\obj\Debug\netstandard2.0\DataBridge.Shared.csproj.CoreCompileInputs.cache
+C:\Workspace\projects\DataBridge\DataBridge.Shared\obj\Debug\netstandard2.0\DataBridge.Shared.dll
+C:\Workspace\projects\DataBridge\DataBridge.Shared\obj\Debug\netstandard2.0\DataBridge.Shared.pdb

@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Sa2BvDV8a5Dxnm1ndoaa3pJ/K9Y2G07DVAgGKHwjssUjxFsR+xonJZlzOh7AajFl2pPdcervKu6TVmufJTt/xg==",
+  "success": true,
+  "projectFilePath": "C:\\Workspace\\projects\\DataBridge\\DataBridge.Shared\\DataBridge.Shared.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Vorname Nachname\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Vorname Nachname\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\Vorname Nachname\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
